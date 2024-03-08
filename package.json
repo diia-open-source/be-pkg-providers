@@ -1,0 +1,75 @@
+{
+    "name": "@diia-inhouse/providers",
+    "version": "1.18.0",
+    "description": "common providers",
+    "author": "Diia",
+    "licence": "SEE LICENCE IN LICENCE.md",
+    "repository": "https://github.com/diia-open-source/be-pkg-providers.git",
+    "main": "dist/index.js",
+    "types": "dist/types/index.d.ts",
+    "engines": {
+        "node": ">=18"
+    },
+    "scripts": {
+        "build": "tsc",
+        "prebuild": "rimraf dist",
+        "prepare": "npm run build",
+        "semantic-release": "semantic-release",
+        "start": "npm run build && node dist/index.js",
+        "lint": "eslint --ext .ts . && prettier --check .",
+        "lint-fix": "eslint --ext .ts --fix && prettier --write .",
+        "lint:lockfile": "lockfile-lint --path package-lock.json --allowed-hosts registry.npmjs.org --validate-https",
+        "test": "jest",
+        "test:unit": "npm run test --selectProjects unit --",
+        "test:coverage": "npm run test --selectProjects unit --coverage --",
+        "find-circulars": "madge --circular --extensions ts ./"
+    },
+    "files": [
+        "dist"
+    ],
+    "keywords": [],
+    "dependencies": {
+        "@diia-inhouse/diia-logger": "2.10.0",
+        "@diia-inhouse/diia-queue": "5.7.0",
+        "@diia-inhouse/env": "1.4.0",
+        "@diia-inhouse/errors": "1.6.1",
+        "@diia-inhouse/redis": "2.4.0",
+        "@diia-inhouse/types": "4.25.0",
+        "@diia-inhouse/utils": "2.33.1",
+        "@diia-inhouse/validators": "1.12.1",
+        "lodash": "4.17.21",
+        "math-expression-evaluator": "2.0.4"
+    },
+    "devDependencies": {
+        "@diia-inhouse/configs": "1.26.3",
+        "@diia-inhouse/diia-metrics": "3.5.0",
+        "@diia-inhouse/eslint-config": "3.4.0",
+        "@diia-inhouse/test": "5.1.0",
+        "@types/lodash": "4.14.201",
+        "jest-mock-extended": "3.0.5",
+        "protobufjs": "7.2.5",
+        "type-fest": "4.7.1"
+    },
+    "jest": {
+        "preset": "@diia-inhouse/configs/dist/jest"
+    },
+    "commitlint": {
+        "extends": "@diia-inhouse/configs/dist/commitlint"
+    },
+    "eslintConfig": {
+        "extends": "@diia-inhouse/eslint-config",
+        "parserOptions": {
+            "project": [
+                "./tsconfig.json",
+                "./tests/tsconfig.json"
+            ]
+        }
+    },
+    "release": {
+        "extends": "@diia-inhouse/configs/dist/semantic-release/package",
+        "branches": [
+            "main"
+        ]
+    },
+    "prettier": "@diia-inhouse/eslint-config/prettier"
+}
