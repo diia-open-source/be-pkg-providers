@@ -26,7 +26,7 @@ This repository contains the package with common providers.
 Example:
 
 ```
-git clone https://github.com/diia-open-source/pkg-providers.git
+git clone https://github.com/diia-open-source/be-pkg-providers.git pkg-providers
 ```
 
 ---
