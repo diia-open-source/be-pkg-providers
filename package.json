@@ -46,6 +46,7 @@
         "@diia-inhouse/eslint-config": "^3.4.0",
         "@diia-inhouse/test": "^5.1.0",
         "@types/lodash": "4.14.201",
+        "@types/amqplib": "0.10.4",
         "jest-mock-extended": "3.0.5",
         "protobufjs": "7.2.5",
         "type-fest": "^4.8.1",
