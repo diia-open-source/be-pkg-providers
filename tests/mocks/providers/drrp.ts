@@ -4,17 +4,17 @@ import {
     DcHouseType,
     DcObjectNumType,
     DcSbjType,
-    DcSbjTypeExt,
     DrrpGroupResultItem,
-    OldRealtyExt,
+    PropertyState,
     Realty,
     RealtyExt,
     RealtyProperty,
+    RealtyState,
     RealtySubject,
     RealtyType,
     SubjectInfoClarifyingResult,
     SubjectInfoResult,
-} from '../../../src/interfaces/providers/drrp'
+} from '../../../src/interfaces/providers'
 
 export function getSubjectInfoResponse(items: DrrpGroupResultItem[] = []): SubjectInfoResult {
     return {
@@ -83,7 +83,7 @@ export function getSubjectInfoClarifyingResponse(data: Partial<RealtyExt> = {}):
             regNum: '123',
             regDate: '2022-02-25',
             reType: RealtyType.Apartment,
-            reState: 'active',
+            reState: RealtyState.Active,
             sectionType: 'residential',
             region: 'Kyiv',
             area: 40,
@@ -94,14 +94,13 @@ export function getSubjectInfoClarifyingResponse(data: Partial<RealtyExt> = {}):
                     regDate: '2022-02-25',
                     prKind: 'ownership',
                     prType: 'apartment',
-                    prState: 'active',
+                    prState: PropertyState.Active,
                     registrar: 'John Doe',
                     entityLinks: [],
-                    operationReason: 'sale',
                     subjects: [
                         {
                             sbjName: 'Jane Smith',
-                            dcSbjType: DcSbjTypeExt.Individual,
+                            dcSbjType: DcSbjType.Individual,
                             country: 'Ukraine',
                         },
                     ],
@@ -124,33 +123,9 @@ export function getSubjectInfoClarifyingResponse(data: Partial<RealtyExt> = {}):
         },
     ]
 
-    const oldRealty: OldRealtyExt[] = [
-        {
-            RE_ID: 1,
-            RE_TYPENAME: 'Apartment',
-            ADDITIONAL: 'Some Additional Info',
-            RC_APPL: 'Some Application Info',
-            owners: [
-                {
-                    DC_SBJ_TYPE: '1',
-                    RESHDATE: '2022-02-25',
-                    NAME: 'John Smith',
-                    CODE: '123456',
-                    OSPART: 'Some Part Info',
-                    links: [
-                        {
-                            R_PR_RN_NUM: '1',
-                            R_DATE: '2022-02-25',
-                        },
-                    ],
-                },
-            ],
-        },
-    ]
-
     return {
         realty,
-        oldRealty,
+        oldRealty: [],
     }
 }
 
@@ -164,16 +139,15 @@ export function getRealtySubject(data: Partial<RealtySubject> = {}): RealtySubje
     }
 }
 
-export function getRealtyProperty(data: Partial<RealtyProperty> = {}, sbjCode?: string): RealtyProperty {
+export function getRealtyProperty(data: Partial<RealtyProperty> = {}, sbjCode = '1233434'): RealtyProperty {
     return {
         rnNum: 1,
         regDate: '2022-02-25',
         prKind: 'ownership',
         prType: 'apartment',
-        prState: 'active',
+        prState: PropertyState.Active,
         registrar: 'John Doe',
         entityLinks: [],
-        operationReason: 'sale',
         partSize: '1',
         subjects: [getRealtySubject({ sbjCode })],
         causeDocuments: [
@@ -197,7 +171,8 @@ export function getRealty(data: Partial<Realty> = {}): Realty {
         regDate: 'regDate',
         techDescription: 'techDescription',
         reType: 'reType',
-        reState: 'reState',
+        reState: RealtyState.Active,
+        dcReTypeOnm: '1',
         sectionType: 'sectionType',
         region: 'Kyiv',
         properties: [getRealtyProperty()],

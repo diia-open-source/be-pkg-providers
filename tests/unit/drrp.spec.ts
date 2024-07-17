@@ -1,7 +1,7 @@
 import { mock } from 'jest-mock-extended'
 
 import DiiaLogger from '@diia-inhouse/diia-logger'
-import { ExternalCommunicator, ExternalEvent } from '@diia-inhouse/diia-queue'
+import { ExternalCommunicator } from '@diia-inhouse/diia-queue'
 import { InternalServerError, ServiceUnavailableError } from '@diia-inhouse/errors'
 
 import {
@@ -14,6 +14,7 @@ import {
     PublicServiceDrrpObjectResponse,
     RealtyProperty,
 } from '../../src'
+import { ExternalEvent } from '../../src/interfaces/providers/drrp'
 import { DrrpProvider } from '../../src/providers'
 import { drrpExtGroupResultValidationSchema, drrpExtSearchResultValidationSchema } from '../../src/validation/drrp'
 import { getRealty, getRealtyProperty, getRealtySubject } from '../mocks/providers/drrp'
@@ -81,7 +82,7 @@ describe(`${DrrpProvider.name}`, () => {
         it('should throw ServiceUnavailableError for connection issue', async () => {
             const atuId = 42
 
-            jest.spyOn(external, 'receiveDirect').mockRejectedValueOnce(new Error())
+            jest.spyOn(external, 'receiveDirect').mockRejectedValueOnce(new Error('Error'))
 
             await expect(drrpProvider.getActualAtuId(atuId)).rejects.toThrow(ServiceUnavailableError)
         })
@@ -327,26 +328,60 @@ describe(`${DrrpProvider.name}`, () => {
 
     describe('isInvalidOwnersData', () => {
         const testParams: IsInvalidOwnersDataTestParams[] = [
+            // 1
             {
-                description: 'one property, one subject, has partSize not equal 1',
+                description: 'one property, one subject, has partSize not equal 1, no prCommonKind',
                 properties: [getRealtyProperty({ partSize: '1/2', subjects: [getRealtySubject()] })],
                 expected: true,
             },
             {
-                description: 'several properties, has partSizes not equal 1',
-                properties: [getRealtyProperty({ partSize: '1/3' }), getRealtyProperty({ partSize: '1/3' })],
+                description: 'one property, one subject, has partSize not equal 1, common partial prCommonKind',
+                properties: [
+                    getRealtyProperty({
+                        partSize: '1/2',
+                        prCommonKind: PropertyCommonKind.CommonPartial,
+                        subjects: [getRealtySubject()],
+                    }),
+                ],
                 expected: true,
             },
             {
-                description: 'several properties, has missing partSize fields',
-                properties: [getRealtyProperty({ partSize: '1/3' }), getRealtyProperty({ partSize: undefined })],
+                description: 'one property, one subject, has partSize not equal 1, common shared prCommonKind',
+                properties: [
+                    getRealtyProperty({
+                        partSize: '1/2',
+                        prCommonKind: PropertyCommonKind.CommonShared,
+                        subjects: [getRealtySubject()],
+                    }),
+                ],
+                expected: false,
+            },
+            // 2
+            {
+                description: 'several properties, has partSizes not equal 1, all common partial prCommonKind',
+                properties: [
+                    getRealtyProperty({ partSize: '1/3', prCommonKind: PropertyCommonKind.CommonPartial }),
+                    getRealtyProperty({ partSize: '1/3', prCommonKind: PropertyCommonKind.CommonPartial }),
+                ],
                 expected: true,
             },
             {
-                description: 'has less then 2 subjects for common shared prCommonKind',
-                properties: [getRealtyProperty({ prCommonKind: PropertyCommonKind.CommonShared, subjects: [getRealtySubject()] })],
+                description: 'several properties, has missing partSize fields for common partial prCommonKind',
+                properties: [
+                    getRealtyProperty({ prCommonKind: PropertyCommonKind.CommonShared }),
+                    getRealtyProperty({ partSize: undefined, prCommonKind: PropertyCommonKind.CommonPartial }),
+                ],
                 expected: true,
             },
+            {
+                description: 'several properties, has partSizes not equal 1, but not all common partial prCommonKind',
+                properties: [
+                    getRealtyProperty({ partSize: '1/3', prCommonKind: PropertyCommonKind.CommonShared }),
+                    getRealtyProperty({ partSize: '1/3', prCommonKind: PropertyCommonKind.CommonPartial }),
+                ],
+                expected: false,
+            },
+            // 3
             {
                 description: 'has non-individual subjects',
                 properties: [getRealtyProperty({ subjects: [getRealtySubject({ dcSbjType: DcSbjType.Entity })] })],
@@ -359,7 +394,7 @@ describe(`${DrrpProvider.name}`, () => {
             },
             {
                 description: 'has valid data',
-                properties: [getRealtyProperty({}, '12345')],
+                properties: [getRealtyProperty({})],
                 expected: false,
             },
         ]
@@ -448,6 +483,7 @@ describe(`${DrrpProvider.name}`, () => {
                     method: 'search',
                     searchParams: {
                         isShowHistoricalNames: false,
+                        isSuspend: false,
                         searchType: DrrpSearchType.Subject,
                         subjectSearchInfo: {
                             sbjType: '1',
@@ -465,7 +501,7 @@ describe(`${DrrpProvider.name}`, () => {
         })
 
         it('should throw service unavailable', async () => {
-            jest.spyOn(external, 'receiveDirect').mockRejectedValueOnce(new Error())
+            jest.spyOn(external, 'receiveDirect').mockRejectedValueOnce(new Error('Error'))
 
             await expect(drrpProvider.getSubjectInfo(itn)).rejects.toThrow(ServiceUnavailableError)
         })
@@ -473,7 +509,7 @@ describe(`${DrrpProvider.name}`, () => {
         it('should throw service unavailable due to error response', async () => {
             jest.spyOn(external, 'receiveDirect').mockResolvedValueOnce({
                 resultData: JSON.stringify({
-                    error: new Error(),
+                    error: new Error('Error'),
                 }),
             })
 
@@ -583,11 +619,11 @@ describe(`${DrrpProvider.name}`, () => {
 
             // Common shared ownership scenarios
             {
-                description: 'common shared ownership with single property and partSize === 1',
+                description: 'common shared ownership with single property and any partSize',
                 properties: [
                     getRealtyProperty({
                         prCommonKind: PropertyCommonKind.CommonShared,
-                        partSize: '1',
+                        partSize: '1/3',
                         subjects: [getRealtySubject({ sbjCode: itn }), getRealtySubject({ sbjCode: 'user2' })],
                     }),
                 ],
@@ -604,11 +640,11 @@ describe(`${DrrpProvider.name}`, () => {
                 expected: OwnershipType.CommonShared,
             },
             {
-                description: 'common shared ownership with multiple common shared properties',
+                description: 'common shared ownership with multiple common shared properties, and any partSize',
                 properties: [
                     getRealtyProperty({
                         prCommonKind: PropertyCommonKind.CommonShared,
-                        partSize: '1/3',
+                        partSize: '1',
                         subjects: [getRealtySubject({ sbjCode: itn }), getRealtySubject({ sbjCode: 'user2' })],
                     }),
                     getRealtyProperty({
@@ -618,14 +654,14 @@ describe(`${DrrpProvider.name}`, () => {
                     }),
                     getRealtyProperty({
                         prCommonKind: PropertyCommonKind.CommonShared,
-                        partSize: '1/3',
                         subjects: [getRealtySubject({ sbjCode: itn }), getRealtySubject({ sbjCode: itn })],
                     }),
                 ],
                 expected: OwnershipType.CommonShared,
             },
             {
-                description: 'common shared ownership with multiple mixed common shared and common partial properties',
+                description:
+                    'common shared ownership with multiple mixed common shared and common partial properties, common partial partSizes < 1',
                 properties: [
                     getRealtyProperty({
                         prCommonKind: PropertyCommonKind.CommonShared,

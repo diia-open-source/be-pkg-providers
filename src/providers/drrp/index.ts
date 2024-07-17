@@ -2,12 +2,23 @@ import { flatMap, max, uniq } from 'lodash'
 import Mexp from 'math-expression-evaluator'
 import { SetRequired } from 'type-fest'
 
-import { ExternalCommunicator, ExternalEvent } from '@diia-inhouse/diia-queue'
+import { ExternalCommunicator } from '@diia-inhouse/diia-queue'
 import { ReceiveDirectOps } from '@diia-inhouse/diia-queue/dist/types/interfaces/externalCommunicator'
-import { InternalServerError, ServiceUnavailableError } from '@diia-inhouse/errors'
+import { ErrorType, InternalServerError, ServiceUnavailableError } from '@diia-inhouse/errors'
 import { Logger } from '@diia-inhouse/types'
 
-import { DrrpConfig, DrrpRequestOptions, OwnershipType, PropertyCommonKind, PropertyOwnerInfo } from '../../interfaces/providers/drrp'
+import {
+    DcSbjType,
+    DrrpConfig,
+    DrrpExtSearchRequestOptions,
+    DrrpRequestOptions,
+    ExternalEvent,
+    OwnershipType,
+    PropertyCommonKind,
+    PropertyOwnerInfo,
+    RealtyProperty,
+    RealtySubject,
+} from '../../interfaces/providers/drrp'
 import {
     PublicServiceDrrpExtGroupRequest,
     PublicServiceDrrpExtGroupResponse,
@@ -15,7 +26,6 @@ import {
     SubjectInfoClarifyingResult,
 } from '../../interfaces/providers/drrp/publicServiceDrrpExtGroup'
 import {
-    DcSbjType,
     DrrpSearchType,
     PublicServiceDrrpExtSearchRequest,
     PublicServiceDrrpExtSearchResponse,
@@ -24,8 +34,6 @@ import {
     PublicServiceDrrpSubjectRequest,
     PublicServiceDrrpSubjectResponse,
     Realty,
-    RealtyProperty,
-    RealtySubject,
     SubjectInfoResult,
 } from '../../interfaces/providers/drrp/publicServiceDrrpExtSearch'
 import {
@@ -46,9 +54,12 @@ export class DrrpProvider {
         private readonly drrpConfig: DrrpConfig = {},
     ) {}
 
-    async getSubjectInfo(itn: string, ops?: DrrpRequestOptions): Promise<SubjectInfoResult> {
+    async getSubjectInfo(itn: string, ops: DrrpExtSearchRequestOptions = {}): Promise<SubjectInfoResult> {
+        const { isSuspend = false } = ops
+
         const request: PublicServiceDrrpSubjectRequest = {
             isShowHistoricalNames: false,
+            isSuspend,
             searchType: DrrpSearchType.Subject,
             subjectSearchInfo: {
                 sbjType: '1',
@@ -115,9 +126,12 @@ export class DrrpProvider {
         return { realty, oldRealty }
     }
 
-    async getObjectInfo(realtyId: string, ops?: DrrpRequestOptions): Promise<Realty | undefined> {
+    async getObjectInfo(realtyId: string, ops: DrrpExtSearchRequestOptions = {}): Promise<Realty | undefined> {
+        const { isSuspend = false } = ops
+
         const request: PublicServiceDrrpObjectRequest = {
             isShowHistoricalNames: false,
+            isSuspend,
             searchType: DrrpSearchType.Object,
             objectSearchInfo: {
                 realtyRnNum: realtyId,
@@ -181,7 +195,7 @@ export class DrrpProvider {
 
     /** @deprecated use getOwnershipType */
     isSoleOwner(owners: Pick<RealtyProperty, 'prCommonKind' | 'subjects' | 'partSize'>[]): boolean {
-        if (!owners.length) {
+        if (owners.length === 0) {
             return false
         }
 
@@ -207,7 +221,7 @@ export class DrrpProvider {
 
     /** @deprecated use isInvalidOwnersData */
     checkOwnersShares(owners: Pick<RealtyProperty, 'partSize' | 'prCommonKind'>[]): boolean {
-        if (!owners.length) {
+        if (owners.length === 0) {
             return false
         }
 
@@ -237,37 +251,41 @@ export class DrrpProvider {
         const partSizesSum = this.countPartSizeSum(properties)
 
         if (properties.length === 1) {
-            const [{ partSize, subjects }] = properties
+            const [{ partSize, subjects, prCommonKind }] = properties
 
             // 1
-            if (partSize && partSizesSum !== 1 && subjects.length === 1) {
+            if (
+                partSize &&
+                partSizesSum !== 1 &&
+                subjects.length === 1 &&
+                (!prCommonKind || prCommonKind === PropertyCommonKind.CommonPartial)
+            ) {
                 this.logger.info('Invalid drrp data: partSize not equal 1', { partSizesSum })
 
                 return true
             }
         } else {
-            // 2
-            const hasPartSizes = properties.some(({ partSize }) => partSize)
-            const hasMissingPartSizes = properties.some(({ partSize }) => !partSize)
+            const isAllCommonPartial = properties.every(({ prCommonKind, partSize }) => {
+                return partSize && prCommonKind === PropertyCommonKind.CommonPartial
+            })
 
-            if (hasPartSizes && (partSizesSum !== 1 || hasMissingPartSizes)) {
-                this.logger.info('Invalid drrp data: partSizes not equal 1 or has properties with missing partSize', {
-                    partSizesSum,
-                    hasMissingPartSizes,
-                })
+            // 2
+            if (isAllCommonPartial && partSizesSum !== 1) {
+                this.logger.info('Invalid drrp data: partSizes not equal 1', { partSizesSum })
 
                 return true
             }
-        }
 
-        // 3
-        const hasMissingSubjectsForCommonShared = properties.some(
-            ({ prCommonKind, subjects }) => prCommonKind === PropertyCommonKind.CommonShared && subjects.length <= 1,
-        )
-        if (hasMissingSubjectsForCommonShared) {
-            this.logger.info('Invalid drrp data: missing subjects for common shared property')
+            const hasMissingPartSizes = properties.some(({ prCommonKind, partSize }) => {
+                return !partSize && prCommonKind === PropertyCommonKind.CommonPartial
+            })
 
-            return true
+            // 2
+            if (hasMissingPartSizes) {
+                this.logger.info('Invalid drrp data: has properties with missing partSize')
+
+                return true
+            }
         }
 
         const hasNonIndividualSubjects = properties.some(({ subjects }) =>
@@ -330,7 +348,7 @@ export class DrrpProvider {
 
         this.logger.error('Failed to determine ownership type', { properties })
 
-        throw new InternalServerError('Failed to determine ownership type', invalidDataProcessCode)
+        throw new InternalServerError('Failed to determine ownership type', invalidDataProcessCode, ErrorType.Operated)
     }
 
     /**
@@ -373,43 +391,44 @@ export class DrrpProvider {
      * @see {@link https://diia.atlassian.net/wiki/spaces/DIIA/pages/1283620916/BRD.036001002.+.v.01.001#5.3.3-%D0%92%D1%96%D0%B4%D0%BE%D0%B1%D1%80%D0%B0%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F-%D0%B5%D0%BA%D1%80%D0%B0%D0%BD%D0%B0-%E2%80%9C%D0%A1%D0%BF%D1%96%D0%B2%D0%B2%D0%BB%D0%B0%D1%81%D0%BD%D0%B8%D0%BA%D0%B8-%D0%BC%D0%B0%D0%B9%D0%BD%D0%B0%E2%80%9C--%D1%83-%D1%81%D1%82%D0%B0%D0%BD%D1%96-%D0%BF%D1%96%D0%B4%D1%82%D0%B2%D0%B5%D1%80%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F-%D0%BF%D0%B5%D1%80%D0%B5%D0%BB%D1%96%D0%BA%D1%83-%D1%81%D0%BF%D1%96%D0%B2%D0%B2%D0%BB%D0%B0%D1%81%D0%BD%D0%B8%D0%BA%D1%96%D0%B2-%D0%BC%D0%B0%D0%B9%D0%BD%D0%B0 documentation page}
      */
     private isCommonSharedOwnershipType(properties: RealtyProperty[], itn: string): boolean {
-        const partSizesSum = this.countPartSizeSum(properties)
         const uniqueItns = new Set(flatMap(properties.map(({ subjects }) => subjects.map(({ sbjCode }) => sbjCode))))
         const hasUserWithCoOwners = uniqueItns.size > 1 && uniqueItns.has(itn)
 
         if (properties.length === 1) {
-            const [{ prCommonKind, partSize }] = properties
+            const [{ prCommonKind }] = properties
 
             // 1
-            if (partSizesSum === 1 && hasUserWithCoOwners && prCommonKind === PropertyCommonKind.CommonShared) {
-                return true
-            }
-
-            // 2
-            if (!partSize && hasUserWithCoOwners && prCommonKind === PropertyCommonKind.CommonShared) {
+            if (hasUserWithCoOwners && prCommonKind === PropertyCommonKind.CommonShared) {
                 return true
             }
         } else {
-            const isAllCommonShared = properties.every(({ prCommonKind, partSize, subjects }) => {
-                const isNotSingleSubject = subjects.length > 1
+            const isAllCommonShared = properties.every(({ prCommonKind, subjects }) => {
+                const isCommonShared = subjects.length > 0 && prCommonKind === PropertyCommonKind.CommonShared
 
-                return partSize && isNotSingleSubject && prCommonKind === PropertyCommonKind.CommonShared
+                return isCommonShared
             })
 
-            // 3, 5
-            if (partSizesSum === 1 && isAllCommonShared && hasUserWithCoOwners) {
+            // 2
+            if (isAllCommonShared && hasUserWithCoOwners) {
                 return true
             }
 
-            const isAllCommonSharedOrCommonPartial = properties.every(({ prCommonKind, partSize, subjects }) => {
-                const isCommonShared = subjects.length > 1 && prCommonKind === PropertyCommonKind.CommonShared
-                const isCommonPartial = subjects.length === 1 && prCommonKind === PropertyCommonKind.CommonPartial
+            const commonSharedProperties = properties.filter(({ prCommonKind, subjects }) => {
+                const isCommonShared = subjects.length > 0 && prCommonKind === PropertyCommonKind.CommonShared
 
-                return partSize && (isCommonShared || isCommonPartial)
+                return isCommonShared
             })
+            const commonPartialProperties = properties.filter(({ prCommonKind, partSize, subjects }) => {
+                const isCommonPartial = subjects.length === 1 && prCommonKind === PropertyCommonKind.CommonPartial && partSize
 
-            // 4
-            if (partSizesSum === 1 && isAllCommonSharedOrCommonPartial && hasUserWithCoOwners) {
+                return isCommonPartial
+            })
+            const commonPartialPartSizesSum = this.countPartSizeSum(commonPartialProperties)
+
+            const isAllCommonSharedOrCommonPartial = commonSharedProperties.length + commonPartialProperties.length === properties.length
+
+            // 3
+            if (commonPartialPartSizesSum < 1 && isAllCommonSharedOrCommonPartial && hasUserWithCoOwners) {
                 return true
             }
         }
@@ -442,12 +461,12 @@ export class DrrpProvider {
     }
 
     private countPartSizeSum(owners: Pick<RealtyProperty, 'partSize'>[]): number {
-        if (!owners.length) {
+        if (owners.length === 0) {
             return 0
         }
 
         const partSizes = owners.map(({ partSize }) => partSize).filter(Boolean)
-        if (!partSizes.length) {
+        if (partSizes.length === 0) {
             return 0
         }
 
@@ -498,10 +517,10 @@ export class DrrpProvider {
         } catch (err) {
             this.logger.error('Failed to request drrp', { err })
 
-            throw new ServiceUnavailableError(
-                'Drrp service is unavailable',
-                ops?.unavailableProcessCode || this.drrpConfig.unavailableProcessCode,
-            )
+            const unavailableProcessCode = ops?.unavailableProcessCode || this.drrpConfig.unavailableProcessCode
+            const errorType = unavailableProcessCode ? ErrorType.Operated : ErrorType.Unoperated
+
+            throw new ServiceUnavailableError('Drrp service is unavailable', unavailableProcessCode, errorType)
         }
     }
 }

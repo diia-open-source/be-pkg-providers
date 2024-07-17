@@ -1,4 +1,4 @@
-import { DrrpError, MortgageExt, PropertyCommonKind, RealtyAddress, RealtyLimitationExt, RealtyType } from '.'
+import { DrrpError, RealtyAddress, RealtyLimitation, RealtyMortgage, RealtyProperty, RealtyState, RealtyType } from '.'
 
 export enum DrrpSearchType {
     Object = '1',
@@ -8,11 +8,6 @@ export enum DrrpSearchType {
 export enum DrrpSearchAlgorithm {
     Partial = '1',
     Complete = '2',
-}
-
-export enum DcSbjType {
-    Individual = '1',
-    Entity = '2',
 }
 
 export interface PublicServiceDrrpExtSearchRequest {
@@ -35,12 +30,15 @@ export interface DrrpSearchSubjectInfo {
     sbjName?: string
     sbjCode?: string
     seriesNum?: string
+    idEddr?: string
+    codeAbsence?: string
     dcSearchAlgorithm?: DrrpSearchAlgorithm
     dcSbjRlNames?: string
 }
 
 export interface PublicServiceDrrpSubjectRequest {
     isShowHistoricalNames: boolean
+    isSuspend?: boolean
     searchType: DrrpSearchType.Subject
     subjectSearchInfo: DrrpSearchSubjectInfo
 }
@@ -52,6 +50,7 @@ export enum DcGroupType {
 
 export enum DcHouseType {
     House = '1',
+    LandPlot = '2',
 }
 
 export enum DcBuildingType {
@@ -60,14 +59,17 @@ export enum DcBuildingType {
 }
 
 export enum DcObjectNumType {
+    Garage = '1',
     Apartment = '2',
     Room = '3',
+    Quartets = '4',
     Block = '5',
     Section = '6',
 }
 
 export enum DcRoomType {
     Room = '1',
+    Quartets = '2',
 }
 
 export interface DrrpGroupResultItem {
@@ -101,67 +103,52 @@ interface PublicServiceDrrpSubjectSuccessResponse {
 export type PublicServiceDrrpSubjectResponse = PublicServiceDrrpSubjectFailedResponse | PublicServiceDrrpSubjectSuccessResponse
 
 export interface DrrpSearchObjectInfo {
-    realtyRnNum: string
+    realtyRnNum?: string
+    cadNum?: string
+    objectIdentifier?: string
+    realtyAddressInfo?: {
+        atuID?: number
+        houseType?: DcHouseType
+        house?: string
+        buildingType?: DcBuildingType
+        building?: string
+        objectNumType?: string
+        objectNum?: string
+        roomType?: string
+        room?: string
+    }
 }
 
 export interface PublicServiceDrrpObjectRequest {
     isShowHistoricalNames: boolean
+    isSuspend?: boolean
     searchType: DrrpSearchType.Object
     objectSearchInfo: DrrpSearchObjectInfo
 }
 
-export interface RealtySubject {
-    sbjName: string
-    sbjCode?: string
-    dcSbjType: DcSbjType
-    country: string
-    idEddr?: string
-    idDoc?: {
-        dcSidType: string
-        publisher: string
-        docDate: string // ISO
-        seriesNum: string
-    }
-}
-
-export interface RealtyCauseDocument {
-    cdType: string
-    docDate: string
-    publisher: string
-    enum: string
-}
-
-export interface RealtyProperty {
-    rnNum: number
-    regDate: string
-    partSize?: string
-    prKind: string
-    prCommonKind?: PropertyCommonKind | string
-    prType?: string
-    prState: string
-    registrar: string
-    entityLinks?: unknown[]
-    operationReason?: string
-    subjects: RealtySubject[]
-    causeDocuments: RealtyCauseDocument[]
-}
-
 export interface Realty {
-    area: number
-    livingArea: number
     regNum: string
-    isResidentialBuilding: string
-    regDate: string
-    techDescription: string
+    regDate: string // ISO
+    dcReTypeOnm: string
     reType: RealtyType | string
-    reTypeOnm?: string
-    reState: string
+    reTypeExtension?: string
+    reSubType?: string
+    reSubTypeExtension?: string
+    reState: RealtyState
+    Cost?: number
+    isResidentialBuilding: '0' | '1'
     sectionType: string
     region: string
+    techDescription?: string
+    area?: number
+    livingArea?: number
+    readinessPercent?: number
+    objectIdentifier?: string
+    additional?: string
     properties: RealtyProperty[]
     realtyAddress: RealtyAddress[]
-    limitation?: RealtyLimitationExt[]
-    mortgage?: MortgageExt[]
+    limitation?: RealtyLimitation[]
+    mortgage?: RealtyMortgage[]
 }
 
 export interface PublicServiceDrrpObjectResponse {
