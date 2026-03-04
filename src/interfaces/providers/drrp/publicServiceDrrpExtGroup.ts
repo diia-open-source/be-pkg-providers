@@ -8,7 +8,7 @@ export interface PublicServiceDrrpExtGroupRequest {
 }
 
 export interface RealtyExt {
-    regNum: string
+    regNum?: string
     regDate: string
     reType: RealtyType | string
     reTypeOnm?: string

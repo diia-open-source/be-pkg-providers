@@ -10,6 +10,10 @@ export enum DrrpSearchAlgorithm {
     Complete = '2',
 }
 
+export enum DrrpSubjectRoleName {
+    Owner = '11',
+}
+
 export interface PublicServiceDrrpExtSearchRequest {
     entity: 'rrpExch_external'
     method: 'search'
@@ -33,7 +37,7 @@ export interface DrrpSearchSubjectInfo {
     idEddr?: string
     codeAbsence?: string
     dcSearchAlgorithm?: DrrpSearchAlgorithm
-    dcSbjRlNames?: string
+    dcSbjRlNames?: DrrpSubjectRoleName | string
 }
 
 export interface PublicServiceDrrpSubjectRequest {

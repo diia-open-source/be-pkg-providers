@@ -4,7 +4,7 @@ import { SetRequired } from 'type-fest'
 
 import { ExternalCommunicator } from '@diia-inhouse/diia-queue'
 import { ReceiveDirectOps } from '@diia-inhouse/diia-queue/dist/types/interfaces/externalCommunicator'
-import { ErrorType, InternalServerError, ServiceUnavailableError } from '@diia-inhouse/errors'
+import { ErrorType, InternalServerError } from '@diia-inhouse/errors'
 import { Logger } from '@diia-inhouse/types'
 
 import {
@@ -55,7 +55,7 @@ export class DrrpProvider {
     ) {}
 
     async getSubjectInfo(itn: string, ops: DrrpExtSearchRequestOptions = {}): Promise<SubjectInfoResult> {
-        const { isSuspend = false } = ops
+        const { isSuspend = false, dcSbjRlNames } = ops
 
         const request: PublicServiceDrrpSubjectRequest = {
             isShowHistoricalNames: false,
@@ -64,6 +64,7 @@ export class DrrpProvider {
             subjectSearchInfo: {
                 sbjType: '1',
                 sbjCode: itn,
+                dcSbjRlNames,
             },
         }
         const response = await this.makeExtSearchRequest<PublicServiceDrrpSubjectResponse>(request, ops)
@@ -75,7 +76,7 @@ export class DrrpProvider {
 
             this.logger.error(errorMsg, error)
 
-            throw new ServiceUnavailableError(errorMsg)
+            throw new InternalServerError(errorMsg)
         }
 
         const { reportResultID, groupResult } = response
@@ -111,7 +112,7 @@ export class DrrpProvider {
 
             this.logger.error(errorMsg, { err, response })
 
-            throw new ServiceUnavailableError(errorMsg)
+            throw new InternalServerError(errorMsg)
         }
 
         const { error, realty, oldRealty }: PublicServiceDrrpExtGroupResult = result
@@ -120,7 +121,7 @@ export class DrrpProvider {
 
             this.logger.error(errorMsg, error)
 
-            throw new ServiceUnavailableError(errorMsg)
+            throw new InternalServerError(errorMsg)
         }
 
         return { realty, oldRealty }
@@ -320,7 +321,7 @@ export class DrrpProvider {
                         item.dcSbjType === DcSbjType.Individual && Boolean(item.sbjCode),
                 )
                 .map(({ sbjName, sbjCode }) => ({
-                    fullName: sbjName,
+                    fullName: this.normalizeFullName(sbjName),
                     rnokpp: sbjCode,
                     rnNum,
                     partSize,
@@ -331,7 +332,7 @@ export class DrrpProvider {
         return owners
     }
 
-    getOwnershipType(realty: Realty, itn: string, invalidDataProcessCode?: number): OwnershipType | never {
+    getOwnershipType(realty: Realty, itn: string): OwnershipType | undefined {
         const { properties } = realty
 
         if (this.isSingleOwnershipType(properties, itn)) {
@@ -346,9 +347,9 @@ export class DrrpProvider {
             return OwnershipType.CommonShared
         }
 
-        this.logger.error('Failed to determine ownership type', { properties })
+        this.logger.warn('Failed to determine ownership type', { properties })
 
-        throw new InternalServerError('Failed to determine ownership type', invalidDataProcessCode, ErrorType.Operated)
+        return undefined
     }
 
     /**
@@ -476,6 +477,10 @@ export class DrrpProvider {
         return partSizesSum
     }
 
+    private normalizeFullName(fullName: string): string {
+        return fullName.replaceAll(/\s+/g, ' ').trim()
+    }
+
     private async makeExtSearchRequest<T>(
         searchParams: PublicServiceDrrpSubjectRequest | PublicServiceDrrpObjectRequest,
         ops: DrrpRequestOptions = {},
@@ -503,14 +508,14 @@ export class DrrpProvider {
 
             this.logger.error(errorMsg, { err, response })
 
-            throw new ServiceUnavailableError(errorMsg)
+            throw new InternalServerError(errorMsg)
         }
     }
 
     private async request<T>(
         event: ExternalEvent,
         request: unknown,
-        ops?: ReceiveDirectOps & { unavailableProcessCode?: number },
+        ops: ReceiveDirectOps & { unavailableProcessCode?: number },
     ): Promise<T> {
         try {
             return await this.external.receiveDirect<T>(event, request, { timeout: this.drrpConfig.timeout, ...ops })
@@ -520,7 +525,7 @@ export class DrrpProvider {
             const unavailableProcessCode = ops?.unavailableProcessCode || this.drrpConfig.unavailableProcessCode
             const errorType = unavailableProcessCode ? ErrorType.Operated : ErrorType.Unoperated
 
-            throw new ServiceUnavailableError('Drrp service is unavailable', unavailableProcessCode, errorType)
+            throw new InternalServerError('Drrp service is unavailable', unavailableProcessCode, errorType)
         }
     }
 }

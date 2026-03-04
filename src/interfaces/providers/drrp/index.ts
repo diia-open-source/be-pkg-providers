@@ -58,6 +58,10 @@ export enum DcSbjType {
     Entity = '2',
 }
 
+export enum ExternalTopic {
+    Repo = 'Repo',
+}
+
 export enum ExternalEvent {
     PublicServiceDrrpExtGroup = 'public-service.drrp-extgroup',
     PublicServiceDrrpExtSearch = 'public-service.drrp-extsearch',
@@ -77,6 +81,7 @@ export interface DrrpRequestOptions {
 
 export interface DrrpExtSearchRequestOptions extends DrrpRequestOptions {
     isSuspend?: boolean
+    dcSbjRlNames?: string
 }
 
 export interface DrrpError {
@@ -86,6 +91,8 @@ export interface DrrpError {
 
 export interface RealtyAddress {
     addressDetail: string
+    /** @example "Садове товариство масиву \"Місячна галявина\"" */
+    objectName?: string
 }
 
 export interface RealtyProperty {
@@ -118,9 +125,9 @@ export interface RealtyLimitation {
     rnNum: number
     regDate: string // ISO
     registrar: string
-    LmType: string
-    LmTypeExtension?: string
-    LmDescription?: string
+    lmType: string
+    lmTypeExtension?: string
+    lmDescription?: string
     execTerm?: string
     actTermText?: string
     actTerm?: string // ISO

@@ -1,8 +1,8 @@
-import { mock } from 'jest-mock-extended'
+import { mock } from 'vitest-mock-extended'
 
 import DiiaLogger from '@diia-inhouse/diia-logger'
 import { ExternalCommunicator } from '@diia-inhouse/diia-queue'
-import { InternalServerError, ServiceUnavailableError } from '@diia-inhouse/errors'
+import { InternalServerError } from '@diia-inhouse/errors'
 
 import {
     DcSbjType,
@@ -49,7 +49,7 @@ describe(`${DrrpProvider.name}`, () => {
 
             const mockResponse: PublicServiceDrrpActualAtuIdResponse = { atuID: atuId, actualAtuID: undefined }
 
-            jest.spyOn(external, 'receiveDirect').mockResolvedValueOnce(mockResponse)
+            external.receiveDirect.mockResolvedValueOnce(mockResponse)
 
             const result = await drrpProvider.getActualAtuId(atuId)
 
@@ -59,7 +59,7 @@ describe(`${DrrpProvider.name}`, () => {
         it('should return same atuId if empty response', async () => {
             const atuId = 42
 
-            jest.spyOn(external, 'receiveDirect').mockResolvedValueOnce(null)
+            external.receiveDirect.mockResolvedValueOnce(null)
 
             const result = await drrpProvider.getActualAtuId(atuId)
 
@@ -72,19 +72,19 @@ describe(`${DrrpProvider.name}`, () => {
 
             const mockResponse: PublicServiceDrrpActualAtuIdResponse = { atuID: atuId, actualAtuID: [atuId, actualAtuId] }
 
-            jest.spyOn(external, 'receiveDirect').mockResolvedValueOnce(mockResponse)
+            external.receiveDirect.mockResolvedValueOnce(mockResponse)
 
             const result = await drrpProvider.getActualAtuId(atuId)
 
             expect(result).toBe(actualAtuId)
         })
 
-        it('should throw ServiceUnavailableError for connection issue', async () => {
+        it('should throw InternalServerError for connection issue', async () => {
             const atuId = 42
 
-            jest.spyOn(external, 'receiveDirect').mockRejectedValueOnce(new Error('Error'))
+            external.receiveDirect.mockRejectedValueOnce(new Error('Error'))
 
-            await expect(drrpProvider.getActualAtuId(atuId)).rejects.toThrow(ServiceUnavailableError)
+            await expect(drrpProvider.getActualAtuId(atuId)).rejects.toThrow(InternalServerError)
         })
     })
 
@@ -94,7 +94,7 @@ describe(`${DrrpProvider.name}`, () => {
 
             const mockResponse: PublicServiceDrrpActualAtuIdResponse = { atuID: atuId, actualAtuID: undefined }
 
-            jest.spyOn(external, 'receiveDirect').mockResolvedValueOnce(mockResponse)
+            external.receiveDirect.mockResolvedValueOnce(mockResponse)
 
             const result = await drrpProvider.getActualAtuIds(atuId)
 
@@ -104,7 +104,7 @@ describe(`${DrrpProvider.name}`, () => {
         it('should return array with same atuId if empty response', async () => {
             const atuId = 42
 
-            jest.spyOn(external, 'receiveDirect').mockResolvedValueOnce(null)
+            external.receiveDirect.mockResolvedValueOnce(null)
 
             const result = await drrpProvider.getActualAtuIds(atuId)
 
@@ -118,7 +118,7 @@ describe(`${DrrpProvider.name}`, () => {
 
             const mockResponse: PublicServiceDrrpActualAtuIdResponse = { atuID: atuId, actualAtuID }
 
-            jest.spyOn(external, 'receiveDirect').mockResolvedValueOnce(mockResponse)
+            external.receiveDirect.mockResolvedValueOnce(mockResponse)
 
             const result = await drrpProvider.getActualAtuIds(atuId)
 
@@ -133,7 +133,7 @@ describe(`${DrrpProvider.name}`, () => {
 
             const mockResponse: PublicServiceDrrpActualAtuIdResponse = { atuID: atuId, actualAtuID }
 
-            jest.spyOn(external, 'receiveDirect').mockResolvedValueOnce(mockResponse)
+            external.receiveDirect.mockResolvedValueOnce(mockResponse)
 
             const result = await drrpProvider.getActualAtuIds(atuId)
 
@@ -164,7 +164,7 @@ describe(`${DrrpProvider.name}`, () => {
                 }),
             }
 
-            jest.spyOn(external, 'receiveDirect').mockResolvedValueOnce(<PublicServiceDrrpObjectResponse>(<unknown>mockResponse))
+            external.receiveDirect.mockResolvedValueOnce(mockResponse as unknown as PublicServiceDrrpObjectResponse)
 
             const id = '1'
 
@@ -173,24 +173,24 @@ describe(`${DrrpProvider.name}`, () => {
             expect(result).toStrictEqual(mockRealty)
         })
 
-        it('should throw ServiceUnavailableError for incorrect data', async () => {
+        it('should throw InternalServerError for incorrect data', async () => {
             const mockResponse = {
                 resultData: {},
             }
 
-            jest.spyOn(external, 'receiveDirect').mockResolvedValueOnce(<PublicServiceDrrpObjectResponse>(<unknown>mockResponse))
+            external.receiveDirect.mockResolvedValueOnce(mockResponse as unknown as PublicServiceDrrpObjectResponse)
 
             const id = '1'
 
-            await expect(drrpProvider.getObjectInfo(id)).rejects.toThrow(ServiceUnavailableError)
+            await expect(drrpProvider.getObjectInfo(id)).rejects.toThrow(InternalServerError)
         })
 
-        it('should throw ServiceUnavailableError for empty response', async () => {
-            jest.spyOn(external, 'receiveDirect').mockResolvedValueOnce(<PublicServiceDrrpObjectResponse>(<unknown>undefined))
+        it('should throw InternalServerError for empty response', async () => {
+            external.receiveDirect.mockResolvedValueOnce(undefined as unknown as PublicServiceDrrpObjectResponse)
 
             const id = '1'
 
-            await expect(drrpProvider.getObjectInfo(id)).rejects.toThrow(ServiceUnavailableError)
+            await expect(drrpProvider.getObjectInfo(id)).rejects.toThrow(InternalServerError)
         })
 
         it('should return undefined for empty reality', async () => {
@@ -200,7 +200,7 @@ describe(`${DrrpProvider.name}`, () => {
                 }),
             }
 
-            jest.spyOn(external, 'receiveDirect').mockResolvedValueOnce(<PublicServiceDrrpObjectResponse>(<unknown>mockResponse))
+            external.receiveDirect.mockResolvedValueOnce(mockResponse as unknown as PublicServiceDrrpObjectResponse)
 
             const id = '1'
 
@@ -224,7 +224,7 @@ describe(`${DrrpProvider.name}`, () => {
             },
             { owners: [{ partSize: '0', prCommonKind: PropertyCommonKind.CommonPartial }], expected: false },
         ])('countPartSizeSum', ({ owners, expected }) => {
-            const result = drrpProvider.checkOwnersShares(<Pick<RealtyProperty, 'partSize' | 'prCommonKind'>[]>(<unknown>owners))
+            const result = drrpProvider.checkOwnersShares(owners as unknown as Pick<RealtyProperty, 'partSize' | 'prCommonKind'>[])
 
             expect(result).toBe(expected)
         })
@@ -232,7 +232,7 @@ describe(`${DrrpProvider.name}`, () => {
         it('should throw InternalServerError if unknown prCommonKind', () => {
             const owners = [{ partSize: 0, prCommonKind: 1 }]
 
-            expect(() => drrpProvider.checkOwnersShares(<Pick<RealtyProperty, 'partSize' | 'prCommonKind'>[]>(<unknown>owners))).toThrow(
+            expect(() => drrpProvider.checkOwnersShares(owners as unknown as Pick<RealtyProperty, 'partSize' | 'prCommonKind'>[])).toThrow(
                 InternalServerError,
             )
         })
@@ -472,7 +472,7 @@ describe(`${DrrpProvider.name}`, () => {
             const mockResponse = {
                 resultData: JSON.stringify(resultData),
             }
-            const spy = jest.spyOn(external, 'receiveDirect').mockResolvedValueOnce(mockResponse)
+            const spy = external.receiveDirect.mockResolvedValueOnce(mockResponse)
 
             const result = await drrpProvider.getSubjectInfo(itn)
 
@@ -501,19 +501,19 @@ describe(`${DrrpProvider.name}`, () => {
         })
 
         it('should throw service unavailable', async () => {
-            jest.spyOn(external, 'receiveDirect').mockRejectedValueOnce(new Error('Error'))
+            external.receiveDirect.mockRejectedValueOnce(new Error('Error'))
 
-            await expect(drrpProvider.getSubjectInfo(itn)).rejects.toThrow(ServiceUnavailableError)
+            await expect(drrpProvider.getSubjectInfo(itn)).rejects.toThrow(InternalServerError)
         })
 
         it('should throw service unavailable due to error response', async () => {
-            jest.spyOn(external, 'receiveDirect').mockResolvedValueOnce({
+            external.receiveDirect.mockResolvedValueOnce({
                 resultData: JSON.stringify({
                     error: new Error('Error'),
                 }),
             })
 
-            await expect(drrpProvider.getSubjectInfo(itn)).rejects.toThrow(ServiceUnavailableError)
+            await expect(drrpProvider.getSubjectInfo(itn)).rejects.toThrow(InternalServerError)
         })
     })
 
@@ -529,7 +529,7 @@ describe(`${DrrpProvider.name}`, () => {
             const mockResponse = {
                 resultData: JSON.stringify(resultData),
             }
-            const spy = jest.spyOn(external, 'receiveDirect').mockResolvedValueOnce(mockResponse)
+            const spy = external.receiveDirect.mockResolvedValueOnce(mockResponse)
 
             const result = await drrpProvider.getSubjectInfoClarifying(reportResultId, groupId)
 
@@ -555,23 +555,23 @@ describe(`${DrrpProvider.name}`, () => {
                 }),
             }
 
-            jest.spyOn(external, 'receiveDirect').mockResolvedValueOnce(mockResponse)
+            external.receiveDirect.mockResolvedValueOnce(mockResponse)
 
-            await expect(drrpProvider.getSubjectInfoClarifying(reportResultId, groupId)).rejects.toThrow(ServiceUnavailableError)
+            await expect(drrpProvider.getSubjectInfoClarifying(reportResultId, groupId)).rejects.toThrow(InternalServerError)
         })
 
         it('should throw service unavailable for incorrect data', async () => {
-            jest.spyOn(external, 'receiveDirect').mockResolvedValueOnce({
+            external.receiveDirect.mockResolvedValueOnce({
                 resultData: {},
             })
 
-            await expect(drrpProvider.getSubjectInfoClarifying(reportResultId, groupId)).rejects.toThrow(ServiceUnavailableError)
+            await expect(drrpProvider.getSubjectInfoClarifying(reportResultId, groupId)).rejects.toThrow(InternalServerError)
         })
 
         it('should throw service unavailable for empty data', async () => {
-            jest.spyOn(external, 'receiveDirect').mockResolvedValueOnce({})
+            external.receiveDirect.mockResolvedValueOnce({})
 
-            await expect(drrpProvider.getSubjectInfoClarifying(reportResultId, groupId)).rejects.toThrow(ServiceUnavailableError)
+            await expect(drrpProvider.getSubjectInfoClarifying(reportResultId, groupId)).rejects.toThrow(InternalServerError)
         })
     })
 
@@ -702,10 +702,10 @@ describe(`${DrrpProvider.name}`, () => {
             expect(drrpProvider.getOwnershipType(realty, itn)).toBe(expected)
         })
 
-        it('should throw error for unknown ownership type', () => {
+        it('should return undefined for unknown ownership type', () => {
             const realty = getRealty({ properties: [] })
 
-            expect(() => drrpProvider.getOwnershipType(realty, 'unknownUser')).toThrow(InternalServerError)
+            expect(drrpProvider.getOwnershipType(realty, 'unknownUser')).toBeUndefined()
         })
     })
 })
