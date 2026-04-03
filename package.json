@@ -1,6 +1,6 @@
 {
     "name": "@diia-inhouse/providers",
-    "version": "1.39.6",
+    "version": "1.39.7",
     "description": "common providers",
     "author": "Diia",
     "main": "dist/index.js",
@@ -32,7 +32,7 @@
         "@diia-inhouse/types": "11.5.0",
         "@diia-inhouse/utils": "5.3.3",
         "@diia-inhouse/validators": "1.28.7",
-        "lodash": "4.17.23",
+        "lodash": "4.18.1",
         "math-expression-evaluator": "2.0.7",
         "type-fest": "4.34.1"
     },
