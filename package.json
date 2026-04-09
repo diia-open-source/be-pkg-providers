@@ -1,6 +1,6 @@
 {
     "name": "@diia-inhouse/providers",
-    "version": "1.39.8",
+    "version": "1.39.9",
     "description": "common providers",
     "author": "Diia",
     "main": "dist/index.js",
@@ -26,12 +26,12 @@
     ],
     "keywords": [],
     "dependencies": {
-        "@diia-inhouse/diia-logger": "3.17.1",
-        "@diia-inhouse/diia-queue": "13.2.2",
-        "@diia-inhouse/errors": "1.18.6",
-        "@diia-inhouse/types": "11.6.0",
-        "@diia-inhouse/utils": "5.3.4",
-        "@diia-inhouse/validators": "1.28.9",
+        "@diia-inhouse/diia-logger": "3.17.3",
+        "@diia-inhouse/diia-queue": "13.2.3",
+        "@diia-inhouse/errors": "1.18.9",
+        "@diia-inhouse/types": "11.7.0",
+        "@diia-inhouse/utils": "5.3.6",
+        "@diia-inhouse/validators": "1.28.13",
         "lodash": "4.18.1",
         "math-expression-evaluator": "2.0.7",
         "type-fest": "4.34.1"
@@ -39,7 +39,7 @@
     "devDependencies": {
         "@diia-inhouse/configs": "6.1.1",
         "@diia-inhouse/eslint-config": "8.8.0",
-        "@diia-inhouse/test": "7.3.6",
+        "@diia-inhouse/test": "7.3.10",
         "@types/lodash": "4.17.24",
         "@vitest/coverage-v8": "4.0.18",
         "@vitest/ui": "4.0.18",
@@ -64,6 +64,6 @@
         ]
     },
     "prettier": "@diia-inhouse/eslint-config/prettier",
-    "repository": "https://github.com/diia-open-source/be-pkg-providers.git",
+    "repository": "https://github.com/diia-open-source/be-pkg-providers",
     "license": null
 }
