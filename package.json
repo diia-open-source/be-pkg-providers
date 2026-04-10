@@ -1,6 +1,6 @@
 {
     "name": "@diia-inhouse/providers",
-    "version": "1.39.9",
+    "version": "1.39.10",
     "description": "common providers",
     "author": "Diia",
     "main": "dist/index.js",
@@ -29,7 +29,7 @@
         "@diia-inhouse/diia-logger": "3.17.3",
         "@diia-inhouse/diia-queue": "13.2.3",
         "@diia-inhouse/errors": "1.18.9",
-        "@diia-inhouse/types": "11.7.0",
+        "@diia-inhouse/types": "12.0.0",
         "@diia-inhouse/utils": "5.3.6",
         "@diia-inhouse/validators": "1.28.13",
         "lodash": "4.18.1",
