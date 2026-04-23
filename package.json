@@ -1,6 +1,6 @@
 {
     "name": "@diia-inhouse/providers",
-    "version": "1.39.18",
+    "version": "1.39.19",
     "description": "common providers",
     "author": "Diia",
     "main": "dist/index.js",
@@ -26,7 +26,7 @@
     ],
     "keywords": [],
     "dependencies": {
-        "@diia-inhouse/diia-logger": "3.19.14",
+        "@diia-inhouse/diia-logger": "3.20.0",
         "@diia-inhouse/diia-queue": "13.2.8",
         "@diia-inhouse/errors": "1.18.17",
         "@diia-inhouse/types": "12.0.1",
