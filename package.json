@@ -1,6 +1,6 @@
 {
     "name": "@diia-inhouse/providers",
-    "version": "1.39.19",
+    "version": "1.39.20",
     "description": "common providers",
     "author": "Diia",
     "main": "dist/index.js",
@@ -26,12 +26,12 @@
     ],
     "keywords": [],
     "dependencies": {
-        "@diia-inhouse/diia-logger": "3.20.0",
+        "@diia-inhouse/diia-logger": "3.20.1",
         "@diia-inhouse/diia-queue": "13.2.8",
-        "@diia-inhouse/errors": "1.18.17",
+        "@diia-inhouse/errors": "1.18.18",
         "@diia-inhouse/types": "12.0.1",
-        "@diia-inhouse/utils": "5.3.17",
-        "@diia-inhouse/validators": "1.28.27",
+        "@diia-inhouse/utils": "5.3.18",
+        "@diia-inhouse/validators": "1.28.28",
         "lodash": "4.18.1",
         "math-expression-evaluator": "2.0.7",
         "type-fest": "4.34.1"
@@ -39,7 +39,7 @@
     "devDependencies": {
         "@diia-inhouse/configs": "6.1.1",
         "@diia-inhouse/eslint-config": "8.8.0",
-        "@diia-inhouse/test": "7.3.16",
+        "@diia-inhouse/test": "7.3.17",
         "@types/lodash": "4.17.24",
         "@vitest/coverage-v8": "4.0.18",
         "@vitest/ui": "4.0.18",
