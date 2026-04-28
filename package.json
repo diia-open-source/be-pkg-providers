@@ -1,6 +1,6 @@
 {
     "name": "@diia-inhouse/providers",
-    "version": "1.39.26",
+    "version": "1.39.27",
     "description": "common providers",
     "author": "Diia",
     "main": "dist/index.js",
@@ -38,8 +38,8 @@
     },
     "devDependencies": {
         "@diia-inhouse/configs": "6.1.1",
-        "@diia-inhouse/eslint-config": "8.8.1",
-        "@diia-inhouse/test": "7.3.19",
+        "@diia-inhouse/eslint-config": "8.8.2",
+        "@diia-inhouse/test": "7.3.20",
         "@types/lodash": "4.17.24",
         "@vitest/coverage-v8": "4.0.18",
         "@vitest/ui": "4.0.18",
