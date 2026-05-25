@@ -1,1 +1,1 @@
-export * from './drrp'
+export * from './drrp/index.js'

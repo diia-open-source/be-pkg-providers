@@ -1,7 +1,7 @@
-export * from './drrp'
+export * from './drrp/index.js'
 
-export * from './drrp/publicServiceDrrpExtGroup'
+export * from './drrp/publicServiceDrrpExtGroup.js'
 
-export * from './drrp/publicServiceDrrpExtSearch'
+export * from './drrp/publicServiceDrrpExtSearch.js'
 
-export * from './drrp/publicServiceDrrpGetActualAtu'
+export * from './drrp/publicServiceDrrpGetActualAtu.js'

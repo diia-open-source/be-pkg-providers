@@ -1,8 +1,8 @@
 import { ValidationSchema } from '@diia-inhouse/validators'
 
-import { PublicServiceDrrpExtGroupResponse } from '../../interfaces/providers/drrp/publicServiceDrrpExtGroup'
-import { PublicServiceDrrpExtSearchResponse } from '../../interfaces/providers/drrp/publicServiceDrrpExtSearch'
-import { PublicServiceDrrpActualAtuIdResponse } from '../../interfaces/providers/drrp/publicServiceDrrpGetActualAtu'
+import { PublicServiceDrrpExtGroupResponse } from '../../interfaces/providers/drrp/publicServiceDrrpExtGroup.js'
+import { PublicServiceDrrpExtSearchResponse } from '../../interfaces/providers/drrp/publicServiceDrrpExtSearch.js'
+import { PublicServiceDrrpActualAtuIdResponse } from '../../interfaces/providers/drrp/publicServiceDrrpGetActualAtu.js'
 
 export const drrpExtGroupResultValidationSchema: ValidationSchema<PublicServiceDrrpExtGroupResponse> = {
     resultData: { type: 'string' },

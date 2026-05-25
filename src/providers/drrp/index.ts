@@ -1,9 +1,8 @@
-import { flatMap, max, uniq } from 'lodash'
+import lodash from 'lodash'
 import Mexp from 'math-expression-evaluator'
 import { SetRequired } from 'type-fest'
 
-import { ExternalCommunicator } from '@diia-inhouse/diia-queue'
-import { ReceiveDirectOps } from '@diia-inhouse/diia-queue/dist/types/interfaces/externalCommunicator'
+import { ExternalCommunicator, ReceiveDirectOps } from '@diia-inhouse/diia-queue'
 import { ErrorType, InternalServerError } from '@diia-inhouse/errors'
 import { Logger } from '@diia-inhouse/types'
 
@@ -18,13 +17,13 @@ import {
     PropertyOwnerInfo,
     RealtyProperty,
     RealtySubject,
-} from '../../interfaces/providers/drrp'
+} from '../../interfaces/providers/drrp/index.js'
 import {
     PublicServiceDrrpExtGroupRequest,
     PublicServiceDrrpExtGroupResponse,
     PublicServiceDrrpExtGroupResult,
     SubjectInfoClarifyingResult,
-} from '../../interfaces/providers/drrp/publicServiceDrrpExtGroup'
+} from '../../interfaces/providers/drrp/publicServiceDrrpExtGroup.js'
 import {
     DrrpSearchType,
     PublicServiceDrrpExtSearchRequest,
@@ -35,16 +34,22 @@ import {
     PublicServiceDrrpSubjectResponse,
     Realty,
     SubjectInfoResult,
-} from '../../interfaces/providers/drrp/publicServiceDrrpExtSearch'
+} from '../../interfaces/providers/drrp/publicServiceDrrpExtSearch.js'
 import {
     PublicServiceDrrpActualAtuIdRequest,
     PublicServiceDrrpActualAtuIdResponse,
-} from '../../interfaces/providers/drrp/publicServiceDrrpGetActualAtu'
+} from '../../interfaces/providers/drrp/publicServiceDrrpGetActualAtu.js'
 import {
     drrpActualAtuValidationSchema,
     drrpExtGroupResultValidationSchema,
     drrpExtSearchResultValidationSchema,
-} from '../../validation/drrp'
+} from '../../validation/drrp/index.js'
+
+// oxlint-disable-next-line typescript/unbound-method
+const { flatMap, max, uniq } = lodash
+
+const COMMON_SHARED: string = PropertyCommonKind.CommonShared
+const COMMON_PARTIAL: string = PropertyCommonKind.CommonPartial
 
 export class DrrpProvider {
     constructor(
@@ -209,11 +214,11 @@ export class DrrpProvider {
 
         const [{ prCommonKind }] = owners
 
-        if (!prCommonKind || prCommonKind === PropertyCommonKind.CommonShared) {
+        if (!prCommonKind || prCommonKind === COMMON_SHARED) {
             return true
         }
 
-        if (prCommonKind === PropertyCommonKind.CommonPartial) {
+        if (prCommonKind === COMMON_PARTIAL) {
             return this.countPartSizeSum(owners) >= 1
         }
 
@@ -228,11 +233,11 @@ export class DrrpProvider {
 
         const [{ prCommonKind }] = owners
 
-        if (!prCommonKind || prCommonKind === PropertyCommonKind.CommonShared) {
+        if (!prCommonKind || prCommonKind === COMMON_SHARED) {
             return true
         }
 
-        if (prCommonKind === PropertyCommonKind.CommonPartial) {
+        if (prCommonKind === COMMON_PARTIAL) {
             const partSizesSum = this.countPartSizeSum(owners)
 
             this.logger.info(`Owners part sizes sum: ${partSizesSum}`)
@@ -255,12 +260,7 @@ export class DrrpProvider {
             const [{ partSize, subjects, prCommonKind }] = properties
 
             // 1
-            if (
-                partSize &&
-                partSizesSum !== 1 &&
-                subjects.length === 1 &&
-                (!prCommonKind || prCommonKind === PropertyCommonKind.CommonPartial)
-            ) {
+            if (partSize && partSizesSum !== 1 && subjects.length === 1 && (!prCommonKind || prCommonKind === COMMON_PARTIAL)) {
                 this.logger.info('Invalid drrp data: partSize not equal 1', { partSizesSum })
 
                 return true
@@ -364,12 +364,12 @@ export class DrrpProvider {
             const hasUserWithoutCoOwners = subjects.length === 1 && subjects[0].sbjCode === itn
 
             // 1
-            if (partSizesSum === 1 && hasUserWithoutCoOwners && (!prCommonKind || prCommonKind === PropertyCommonKind.CommonPartial)) {
+            if (partSizesSum === 1 && hasUserWithoutCoOwners && (!prCommonKind || prCommonKind === COMMON_PARTIAL)) {
                 return true
             }
 
             // 3
-            if (!partSize && hasUserWithoutCoOwners && (!prCommonKind || prCommonKind === PropertyCommonKind.CommonPartial)) {
+            if (!partSize && hasUserWithoutCoOwners && (!prCommonKind || prCommonKind === COMMON_PARTIAL)) {
                 return true
             }
         } else {

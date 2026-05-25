@@ -1,5 +1,5 @@
-export * from './providers'
+export * from './providers/index.js'
 
-export * from './interfaces/providers'
+export * from './interfaces/providers/index.js'
 
-export * from './configs'
+export * from './configs/index.js'

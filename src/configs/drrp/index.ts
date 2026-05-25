@@ -2,7 +2,7 @@ import { PartialDeep } from 'type-fest'
 
 import { QueueConfigType, QueueConnectionConfig } from '@diia-inhouse/diia-queue'
 
-import { ExternalEvent, ExternalTopic } from '../../interfaces/providers'
+import { ExternalEvent, ExternalTopic } from '../../interfaces/providers/index.js'
 
 export const drrpProviderQueueConfig: PartialDeep<QueueConnectionConfig['serviceRulesConfig']> = {
     servicesConfig: {

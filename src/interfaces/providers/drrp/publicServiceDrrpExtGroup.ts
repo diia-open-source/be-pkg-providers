@@ -1,4 +1,4 @@
-import { DrrpError, RealtyAddress, RealtyLimitation, RealtyMortgage, RealtyProperty, RealtyState, RealtyType } from '.'
+import { DrrpError, RealtyAddress, RealtyLimitation, RealtyMortgage, RealtyProperty, RealtyState, RealtyType } from './index.js'
 
 export interface PublicServiceDrrpExtGroupRequest {
     entity: 'rrpExch_external'

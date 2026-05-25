@@ -1,6 +1,6 @@
 import { mock } from 'vitest-mock-extended'
 
-import DiiaLogger from '@diia-inhouse/diia-logger'
+import { DiiaLogger } from '@diia-inhouse/diia-logger'
 import { ExternalCommunicator } from '@diia-inhouse/diia-queue'
 import { InternalServerError } from '@diia-inhouse/errors'
 
@@ -37,7 +37,7 @@ interface GetOwnershipTypeTestParams {
     expected: OwnershipType
 }
 
-describe(`${DrrpProvider.name}`, () => {
+describe(DrrpProvider.name, () => {
     const logger = new DiiaLogger()
     const external = mock<ExternalCommunicator>()
 
