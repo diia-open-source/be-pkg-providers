@@ -523,7 +523,7 @@ export class DrrpProvider {
             this.logger.error('Failed to request drrp', { err })
 
             const unavailableProcessCode = ops?.unavailableProcessCode || this.drrpConfig.unavailableProcessCode
-            const errorType = unavailableProcessCode ? ErrorType.Operated : ErrorType.Unoperated
+            const errorType = unavailableProcessCode ? ErrorType.External : ErrorType.Unoperated
 
             throw new InternalServerError('Drrp service is unavailable', unavailableProcessCode, errorType)
         }
