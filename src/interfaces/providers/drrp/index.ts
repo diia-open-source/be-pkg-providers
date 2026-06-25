@@ -66,6 +66,7 @@ export enum ExternalEvent {
     PublicServiceDrrpExtGroup = 'public-service.drrp-extgroup',
     PublicServiceDrrpExtSearch = 'public-service.drrp-extsearch',
     PublicServiceDrrpGetActualAtu = 'public-service.drrp-getactualatu',
+    PublicServiceDrrpGetRealtyOperation = 'public-service.drrp-getrealtyoperation',
 }
 
 export interface DrrpConfig {
@@ -137,6 +138,59 @@ export interface RealtyLimitation {
     subjects: RealtySubject[]
     causeDocuments: RealtyCauseDocument[]
     entityLinks: (RealtyEntityLink & { linkLmRnNum?: string })[]
+}
+
+export interface RealtyOperation {
+    opID: number
+    dcOpType: string
+    opType: string
+    isActive: string
+}
+
+export interface RealtyGroundArea {
+    cadNum?: string
+    melNetNum?: string
+    area?: string
+    areaUM?: string
+}
+
+export interface RealtyIrp {
+    rnNum: number
+    regDate: string // ISO
+    cost?: number
+    rpCost?: number
+    registrar: string
+    IrpSort: string
+    irpSortExtension?: string
+    irpDescription?: string
+    opDate?: string
+    dcOpReasonType?: string
+    OpReasonType?: string
+    opReason?: string
+    isIndefinitely?: string
+    actTermText?: string
+    actTerm?: string // ISO
+    ContractTerm?: string // ISO
+    ExpirationTerm?: string // ISO
+    Year?: number
+    Month?: number
+    Day?: number
+    isRent?: string
+    isRightToRent?: string
+    isRightProlongation?: string
+    isAutomaticProlongation?: string
+    objectDescription?: string
+    irpSpread?: string
+    easementType?: string
+    easementTypeExt?: string
+    rentIrpRnNum?: number
+    enumEmph?: string
+    enumSubPart?: string
+    enumSPart?: string
+    subjects: RealtySubject[]
+    causeDocuments: RealtyCauseDocument[]
+    entityLinks?: (RealtyEntityLink & { linkPrRnNum?: string })[]
+    operations: RealtyOperation[]
 }
 
 export interface RealtySubject {

@@ -28,3 +28,12 @@ export const drrpActualAtuValidationSchema: ValidationSchema<PublicServiceDrrpAc
     atuID: { type: 'number', optional: true },
     actualAtuID: { type: 'array', optional: true, items: 'number' },
 }
+
+export const drrpGetRealtyOperationValidationSchema: ValidationSchema = {
+    realtyRnNum: { type: 'string', optional: true },
+    mgRnNum: { type: 'string', optional: true },
+    lmRnNum: { type: 'string', optional: true },
+    prRnNum: { type: 'string', optional: true },
+    irpRnNum: { type: 'string', optional: true },
+    resultData: { type: 'object' },
+}

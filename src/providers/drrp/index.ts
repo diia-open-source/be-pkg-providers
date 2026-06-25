@@ -40,9 +40,14 @@ import {
     PublicServiceDrrpActualAtuIdResponse,
 } from '../../interfaces/providers/drrp/publicServiceDrrpGetActualAtu.js'
 import {
+    PublicServiceDrrpGetRealtyOperationRequest,
+    PublicServiceDrrpGetRealtyOperationResponse,
+} from '../../interfaces/providers/index.js'
+import {
     drrpActualAtuValidationSchema,
     drrpExtGroupResultValidationSchema,
     drrpExtSearchResultValidationSchema,
+    drrpGetRealtyOperationValidationSchema,
 } from '../../validation/drrp/index.js'
 
 // oxlint-disable-next-line typescript/unbound-method
@@ -197,6 +202,30 @@ export class DrrpProvider {
         }
 
         return actualAtuID
+    }
+
+    async getRealtyOperation(
+        request: PublicServiceDrrpGetRealtyOperationRequest,
+        ops: DrrpRequestOptions = {},
+    ): Promise<PublicServiceDrrpGetRealtyOperationResponse> {
+        const response = await this.request<PublicServiceDrrpGetRealtyOperationResponse>(
+            ExternalEvent.PublicServiceDrrpGetRealtyOperation,
+            request,
+            {
+                validationRules: drrpGetRealtyOperationValidationSchema,
+                ...ops,
+            },
+        )
+
+        if (!response) {
+            const errorMsg = 'Failed to retrieve realty operation data from the drrp registry'
+
+            this.logger.error(errorMsg, { request })
+
+            throw new InternalServerError(errorMsg)
+        }
+
+        return response
     }
 
     /** @deprecated use getOwnershipType */
