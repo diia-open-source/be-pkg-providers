@@ -1,6 +1,6 @@
 {
     "name": "@diia-inhouse/providers",
-    "version": "2.4.7",
+    "version": "2.5.0",
     "type": "module",
     "description": "common providers",
     "author": "Diia",

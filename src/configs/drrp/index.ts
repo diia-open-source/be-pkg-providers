@@ -5,17 +5,6 @@ import { QueueConfigType, QueueConnectionConfig } from '@diia-inhouse/diia-queue
 import { ExternalEvent, ExternalTopic } from '../../interfaces/providers/index.js'
 
 export const drrpProviderQueueConfig: PartialDeep<QueueConnectionConfig['serviceRulesConfig']> = {
-    servicesConfig: {
-        [QueueConfigType.External]: {
-            subscribe: [],
-            publish: [
-                ExternalEvent.PublicServiceDrrpExtSearch,
-                ExternalEvent.PublicServiceDrrpExtGroup,
-                ExternalEvent.PublicServiceDrrpGetActualAtu,
-                ExternalEvent.PublicServiceDrrpGetRealtyOperation,
-            ],
-        },
-    },
     topicsConfig: {
         [QueueConfigType.External]: {
             [ExternalTopic.Repo]: {
