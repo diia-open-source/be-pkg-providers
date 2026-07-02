@@ -1,6 +1,6 @@
 {
     "name": "@diia-inhouse/providers",
-    "version": "2.5.1",
+    "version": "2.5.2",
     "type": "module",
     "description": "common providers",
     "author": "Diia",
@@ -34,10 +34,10 @@
     ],
     "keywords": [],
     "dependencies": {
-        "@diia-inhouse/diia-logger": "4.4.5",
+        "@diia-inhouse/diia-logger": "4.4.6",
         "@diia-inhouse/diia-queue": "14.0.30",
-        "@diia-inhouse/errors": "2.2.1",
-        "@diia-inhouse/types": "14.1.0",
+        "@diia-inhouse/errors": "2.2.2",
+        "@diia-inhouse/types": "14.1.1",
         "@diia-inhouse/utils": "6.0.41",
         "@diia-inhouse/validators": "2.2.32",
         "lodash": "4.18.1",
@@ -47,7 +47,7 @@
     "devDependencies": {
         "@diia-inhouse/configs": "7.0.1",
         "@diia-inhouse/oxc-config": "1.11.0",
-        "@diia-inhouse/test": "8.2.16",
+        "@diia-inhouse/test": "8.2.17",
         "@types/lodash": "4.17.24",
         "@vitest/coverage-v8": "4.1.5",
         "@vitest/ui": "4.1.5",
