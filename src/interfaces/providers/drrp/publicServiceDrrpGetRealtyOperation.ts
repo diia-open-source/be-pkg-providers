@@ -38,10 +38,6 @@ export interface RealtyOperationLimitation extends RealtyLimitation {
     operations: RealtyOperation[]
 }
 
-export interface GetRealtyOperationPrRnNumResultData {
-    properties?: RealtyOperationProperty[]
-}
-
 export interface GetRealtyOperationMgRnNumResultData {
     mortgage?: RealtyOperationMortgage[]
 }
@@ -86,7 +82,7 @@ export interface GetRealtyOperationRealtyRnNumResultData {
 }
 
 export type PublicServiceDrrpGetRealtyOperationResponse =
-    | { prRnNum?: string; resultData: GetRealtyOperationPrRnNumResultData }
+    | { prRnNum?: string; resultData: RealtyOperationProperty }
     | { realtyRnNum?: string; resultData: GetRealtyOperationRealtyRnNumResultData }
     | { mgRnNum?: string; resultData: GetRealtyOperationMgRnNumResultData }
     | { lmRnNum?: string; resultData: GetRealtyOperationLmRnNumResultData }
