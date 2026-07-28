@@ -87,3 +87,10 @@ export type PublicServiceDrrpGetRealtyOperationResponse =
     | { mgRnNum?: string; resultData: GetRealtyOperationMgRnNumResultData }
     | { lmRnNum?: string; resultData: GetRealtyOperationLmRnNumResultData }
     | { irpRnNum?: string; resultData: GetRealtyOperationIrpRnNumResultData }
+
+export type PublicServiceDrrpGetRealtyOperationEventResponse =
+    | { prRnNum?: string; resultData: string }
+    | { realtyRnNum?: string; resultData: string }
+    | { mgRnNum?: string; resultData: string }
+    | { lmRnNum?: string; resultData: string }
+    | { irpRnNum?: string; resultData: string }

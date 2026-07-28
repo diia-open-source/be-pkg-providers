@@ -42,6 +42,7 @@ import {
 import {
     PublicServiceDrrpGetRealtyOperationRequest,
     PublicServiceDrrpGetRealtyOperationResponse,
+    PublicServiceDrrpGetRealtyOperationEventResponse,
 } from '../../interfaces/providers/index.js'
 import {
     drrpActualAtuValidationSchema,
@@ -208,7 +209,7 @@ export class DrrpProvider {
         request: PublicServiceDrrpGetRealtyOperationRequest,
         ops: DrrpRequestOptions = {},
     ): Promise<PublicServiceDrrpGetRealtyOperationResponse> {
-        const response = await this.request<PublicServiceDrrpGetRealtyOperationResponse>(
+        const response = await this.request<PublicServiceDrrpGetRealtyOperationEventResponse>(
             ExternalEvent.PublicServiceDrrpGetRealtyOperation,
             request,
             {
@@ -225,7 +226,19 @@ export class DrrpProvider {
             throw new InternalServerError(errorMsg)
         }
 
-        return response
+        let resultData
+
+        try {
+            resultData = JSON.parse(response.resultData)
+        } catch (err) {
+            const errorMsg = 'Failed to parse realty operation result data from the drrp registry'
+
+            this.logger.error(errorMsg, { err, response })
+
+            throw new InternalServerError(errorMsg)
+        }
+
+        return { ...response, resultData }
     }
 
     /** @deprecated use getOwnershipType */
