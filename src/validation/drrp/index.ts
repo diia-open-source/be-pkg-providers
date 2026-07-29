@@ -3,6 +3,7 @@ import { ValidationSchema } from '@diia-inhouse/validators'
 import { PublicServiceDrrpExtGroupResponse } from '../../interfaces/providers/drrp/publicServiceDrrpExtGroup.js'
 import { PublicServiceDrrpExtSearchResponse } from '../../interfaces/providers/drrp/publicServiceDrrpExtSearch.js'
 import { PublicServiceDrrpActualAtuIdResponse } from '../../interfaces/providers/drrp/publicServiceDrrpGetActualAtu.js'
+import { PublicServiceDrrpGetRealtyOperationEventResponse } from '../../interfaces/providers/drrp/publicServiceDrrpGetRealtyOperation.js'
 
 export const drrpExtGroupResultValidationSchema: ValidationSchema<PublicServiceDrrpExtGroupResponse> = {
     resultData: { type: 'string' },
@@ -29,11 +30,11 @@ export const drrpActualAtuValidationSchema: ValidationSchema<PublicServiceDrrpAc
     actualAtuID: { type: 'array', optional: true, items: 'number' },
 }
 
-export const drrpGetRealtyOperationValidationSchema: ValidationSchema = {
+export const drrpGetRealtyOperationValidationSchema: ValidationSchema<PublicServiceDrrpGetRealtyOperationEventResponse> = {
     realtyRnNum: { type: 'string', optional: true },
     mgRnNum: { type: 'string', optional: true },
     lmRnNum: { type: 'string', optional: true },
     prRnNum: { type: 'string', optional: true },
     irpRnNum: { type: 'string', optional: true },
-    resultData: { type: 'object' },
+    resultData: { type: 'string' },
 }
