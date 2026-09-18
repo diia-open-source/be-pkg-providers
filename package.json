@@ -1,6 +1,6 @@
 {
     "name": "@diia-inhouse/providers",
-    "version": "2.6.31",
+    "version": "2.6.32",
     "type": "module",
     "description": "common providers",
     "author": "Diia",
@@ -46,7 +46,7 @@
     },
     "devDependencies": {
         "@diia-inhouse/configs": "7.2.1",
-        "@diia-inhouse/oxc-config": "2.1.7",
+        "@diia-inhouse/oxc-config": "3.0.0",
         "@diia-inhouse/test": "8.3.21",
         "@types/lodash": "4.17.24",
         "@vitest/coverage-v8": "4.1.11",
