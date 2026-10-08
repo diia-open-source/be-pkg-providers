@@ -11,7 +11,6 @@ import {
     PropertyCommonKind,
     PropertyOwnerInfo,
     PublicServiceDrrpActualAtuIdResponse,
-    PublicServiceDrrpObjectResponse,
     RealtyProperty,
 } from '../../src'
 import { ExternalEvent } from '../../src/interfaces/providers/drrp'
@@ -164,7 +163,7 @@ describe(DrrpProvider.name, () => {
                 }),
             }
 
-            external.receiveDirect.mockResolvedValueOnce(mockResponse as unknown as PublicServiceDrrpObjectResponse)
+            external.receiveDirect.mockResolvedValueOnce(mockResponse)
 
             const id = '1'
 
@@ -178,7 +177,7 @@ describe(DrrpProvider.name, () => {
                 resultData: {},
             }
 
-            external.receiveDirect.mockResolvedValueOnce(mockResponse as unknown as PublicServiceDrrpObjectResponse)
+            external.receiveDirect.mockResolvedValueOnce(mockResponse)
 
             const id = '1'
 
@@ -186,7 +185,7 @@ describe(DrrpProvider.name, () => {
         })
 
         it('should throw InternalServerError for empty response', async () => {
-            external.receiveDirect.mockResolvedValueOnce(undefined as unknown as PublicServiceDrrpObjectResponse)
+            external.receiveDirect.mockResolvedValueOnce(undefined)
 
             const id = '1'
 
@@ -200,7 +199,7 @@ describe(DrrpProvider.name, () => {
                 }),
             }
 
-            external.receiveDirect.mockResolvedValueOnce(mockResponse as unknown as PublicServiceDrrpObjectResponse)
+            external.receiveDirect.mockResolvedValueOnce(mockResponse)
 
             const id = '1'
 
@@ -224,7 +223,7 @@ describe(DrrpProvider.name, () => {
             },
             { owners: [{ partSize: '0', prCommonKind: PropertyCommonKind.CommonPartial }], expected: false },
         ])('countPartSizeSum', ({ owners, expected }) => {
-            const result = drrpProvider.checkOwnersShares(owners as unknown as Pick<RealtyProperty, 'partSize' | 'prCommonKind'>[])
+            const result = drrpProvider.checkOwnersShares(owners)
 
             expect(result).toBe(expected)
         })
