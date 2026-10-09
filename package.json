@@ -1,6 +1,6 @@
 {
     "name": "@diia-inhouse/providers",
-    "version": "2.6.56",
+    "version": "2.6.57",
     "description": "common providers",
     "license": null,
     "author": "diia-team",
@@ -32,12 +32,12 @@
         "find-circulars": "madge --circular --extensions ts ./"
     },
     "dependencies": {
-        "@diia-inhouse/diia-logger": "4.7.11",
+        "@diia-inhouse/diia-logger": "4.7.12",
         "@diia-inhouse/diia-queue": "14.2.33",
-        "@diia-inhouse/errors": "2.3.19",
+        "@diia-inhouse/errors": "2.3.20",
         "@diia-inhouse/types": "14.5.3",
         "@diia-inhouse/utils": "6.1.21",
-        "@diia-inhouse/validators": "2.2.106",
+        "@diia-inhouse/validators": "2.2.107",
         "lodash": "4.18.1",
         "math-expression-evaluator": "2.0.7",
         "type-fest": "5.6.0"
@@ -45,7 +45,7 @@
     "devDependencies": {
         "@diia-inhouse/configs": "7.2.2",
         "@diia-inhouse/oxc-config": "4.0.2",
-        "@diia-inhouse/test": "8.3.36",
+        "@diia-inhouse/test": "8.3.37",
         "@types/lodash": "4.17.24",
         "@vitest/coverage-v8": "4.1.11",
         "@vitest/ui": "4.1.11",
