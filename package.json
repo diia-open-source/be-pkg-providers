@@ -1,6 +1,6 @@
 {
     "name": "@diia-inhouse/providers",
-    "version": "2.6.63",
+    "version": "2.6.64",
     "description": "common providers",
     "license": null,
     "author": "diia-team",
@@ -34,8 +34,8 @@
     "dependencies": {
         "@diia-inhouse/diia-logger": "4.7.17",
         "@diia-inhouse/diia-queue": "14.2.36",
-        "@diia-inhouse/errors": "2.3.23",
-        "@diia-inhouse/types": "14.6.0",
+        "@diia-inhouse/errors": "2.3.24",
+        "@diia-inhouse/types": "14.6.1",
         "@diia-inhouse/utils": "6.1.26",
         "@diia-inhouse/validators": "2.2.111",
         "lodash": "4.18.1",
