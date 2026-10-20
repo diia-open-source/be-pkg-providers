@@ -1,6 +1,6 @@
 {
     "name": "@diia-inhouse/providers",
-    "version": "2.6.67",
+    "version": "2.6.68",
     "description": "common providers",
     "license": null,
     "author": "diia-team",
@@ -32,11 +32,11 @@
         "find-circulars": "madge --circular --extensions ts ./"
     },
     "dependencies": {
-        "@diia-inhouse/diia-logger": "4.7.21",
-        "@diia-inhouse/diia-queue": "14.2.37",
+        "@diia-inhouse/diia-logger": "4.7.22",
+        "@diia-inhouse/diia-queue": "14.2.38",
         "@diia-inhouse/errors": "2.3.25",
         "@diia-inhouse/types": "14.6.1",
-        "@diia-inhouse/utils": "6.1.29",
+        "@diia-inhouse/utils": "6.1.30",
         "@diia-inhouse/validators": "2.2.114",
         "lodash": "4.18.1",
         "math-expression-evaluator": "2.0.7",
