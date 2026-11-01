@@ -1,6 +1,6 @@
 {
     "name": "@diia-inhouse/providers",
-    "version": "2.6.83",
+    "version": "2.6.84",
     "description": "common providers",
     "license": null,
     "author": "diia-team",
@@ -31,12 +31,12 @@
         "test:watch": "vitest watch"
     },
     "dependencies": {
-        "@diia-inhouse/diia-logger": "4.7.37",
+        "@diia-inhouse/diia-logger": "4.7.39",
         "@diia-inhouse/diia-queue": "14.2.45",
         "@diia-inhouse/errors": "2.3.36",
         "@diia-inhouse/types": "14.11.0",
-        "@diia-inhouse/utils": "6.2.5",
-        "@diia-inhouse/validators": "2.2.128",
+        "@diia-inhouse/utils": "6.2.7",
+        "@diia-inhouse/validators": "2.2.129",
         "lodash": "4.18.1",
         "math-expression-evaluator": "2.0.7",
         "type-fest": "5.6.0"
