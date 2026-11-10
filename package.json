@@ -1,6 +1,6 @@
 {
     "name": "@diia-inhouse/providers",
-    "version": "2.6.93",
+    "version": "2.6.94",
     "description": "common providers",
     "license": null,
     "author": "diia-team",
@@ -32,7 +32,7 @@
     },
     "dependencies": {
         "@diia-inhouse/diia-logger": "4.7.49",
-        "@diia-inhouse/diia-queue": "14.2.53",
+        "@diia-inhouse/diia-queue": "14.2.54",
         "@diia-inhouse/errors": "2.3.42",
         "@diia-inhouse/types": "14.12.3",
         "@diia-inhouse/utils": "6.2.15",
@@ -63,10 +63,7 @@
         "extends": "@diia-inhouse/configs/dist/commitlint"
     },
     "release": {
-        "extends": "@diia-inhouse/configs/dist/semantic-release/package",
-        "branches": [
-            "main"
-        ]
+        "extends": "@diia-inhouse/configs/dist/semantic-release/package"
     },
     "engines": {
         "node": ">=24"
